@@ -38,7 +38,7 @@ footer{text-align:center;color:#8993a8;font-size:11px;padding:22px 8px}
 <link rel="apple-touch-icon" href="./zenvio-icon.png">
 </head>
 <body>
-<header><div class="top"><div class="brand"><div class="logo">Z</div><div><h1>ZENVIO</h1><p class="tag">ALL-IN-ONE SMART TOOLS</p></div></div><div class="actions"><button class="ghost" id="langBtn">اردو</button><button class="ghost" id="themeBtn">☾</button></div></div></header>
+<header><div class="top"><div class="brand"><div class="logo">Z</div><div><h1>ZENVIO</h1><p class="tag">ALL-IN-ONE SMART TOOLS</p></div></div><div class="actions"><button class="ghost" id="langBtn">اردو</button><button class="ghost" id="themeBtn">☾</button><button class="ghost" id="installBtn" hidden>Install App</button></div></div></header>
 <main class="wrap">
 <p class="welcome" id="welcome">Simple, useful calculators — all in one place.</p>
 <section id="home" class="grid">
@@ -72,11 +72,31 @@ if(t==='electric')f=field('units',lang==='en'?'Units consumed':'استعمال �
 if(t==='currency')f=field('amount',lang==='en'?'Amount':'رقم')+select('from',lang==='en'?'From':'سے',[['PKR','PKR'],['USD','USD'],['SAR','SAR'],['AED','AED'],['GBP','GBP'],['EUR','EUR']])+select('to',lang==='en'?'To':'میں',[['USD','USD'],['PKR','PKR'],['SAR','SAR'],['AED','AED'],['GBP','GBP'],['EUR','EUR']])+field('rate',lang==='en'?'Exchange rate: 1 unit of FROM = ? TO':'تبادلہ ریٹ: FROM کا 1 = کتنے TO؟');
 if(t==='unit')f=select('kind',lang==='en'?'Measurement':'پیمائش',[['length','Length'],['weight','Weight'],['temperature','Temperature']])+field('value',lang==='en'?'Value':'قدر')+select('from',lang==='en'?'From':'سے',[])+select('to',lang==='en'?'To':'میں',[]);
 $('fields').innerHTML=f;
-if(t==='currency'){$('rate').value='';$('note').textContent=lang==='en'?'Enter the current exchange rate yourself. Rates are not live.':'موجودہ ایکسچینج ریٹ خود درج کریں۔ ریٹس لائیو نہیں ہیں۔';$('from').addEventListener('change',()=>{$('rate').value='';});}
+if(t==='currency'){$('rate').value='';$('note').textContent=lang==='en'?'Fetching live rates…':'لائیو ریٹ حاصل کیا جا رہا ہے…';loadLiveRate();$('from').addEventListener('change',loadLiveRate);$('to').addEventListener('change',loadLiveRate);}
 if(t==='unit'){updateUnits();$('kind').addEventListener('change',updateUnits);}
 $('panel').scrollIntoView({behavior:'smooth',block:'start'});}
 function updateUnits(){let k=$('kind').value,sets={length:[['m','Meters'],['km','Kilometers'],['cm','Centimeters'],['ft','Feet'],['in','Inches']],weight:[['kg','Kilograms'],['g','Grams'],['lb','Pounds'],['tonne','Metric tonnes']],temperature:[['C','Celsius'],['F','Fahrenheit'],['K','Kelvin']]};let opts=sets[k];['from','to'].forEach(id=>$(id).innerHTML=opts.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join(''));if(k==='length')$('to').value='km';if(k==='weight')$('to').value='g';if(k==='temperature')$('to').value='F';}
 const num=id=>{let v=Number($(id).value);return Number.isFinite(v)?v:NaN},fmt=n=>Number(n).toLocaleString(undefined,{maximumFractionDigits:2});
+let liveRates=null,rateFetchedAt='';
+async function loadLiveRate(){
+ if(current!=='currency')return;
+ const from=$('from').value,to=$('to').value;
+ if(from===to){$('rate').value='1';$('note').textContent=lang==='en'?'Live rate: same currency.':'ایک ہی کرنسی ہے۔';return;}
+ $('note').textContent=lang==='en'?'Updating live exchange rate…':'لائیو ایکسچینج ریٹ اپڈیٹ ہو رہا ہے…';
+ try{
+  const response=await fetch('https://open.er-api.com/v6/latest/USD',{cache:'no-store'});
+  if(!response.ok)throw new Error('Rate service unavailable');
+  const data=await response.json();
+  if(data.result!=='success'||!data.rates||!data.rates[from]||!data.rates[to])throw new Error('Currency not supported');
+  liveRates=data.rates;rateFetchedAt=data.time_last_update_utc||new Date().toUTCString();
+  const cross=liveRates[to]/liveRates[from];
+  $('rate').value=String(Number(cross.toFixed(6)));
+  $('note').textContent=(lang==='en'?'Live rate · Updated: ':'لائیو ریٹ · اپڈیٹ: ')+rateFetchedAt+' · '+(lang==='en'?'You can edit the rate manually.':'آپ ریٹ خود بھی تبدیل کر سکتے ہیں۔');
+ }catch(err){
+  $('note').textContent=lang==='en'?'Live rate unavailable. Check internet or enter the rate manually.':'لائیو ریٹ دستیاب نہیں۔ انٹرنیٹ چیک کریں یا ریٹ خود درج کریں۔';
+ }
+}
+
 function calculate(){let r='',n1,n2;
 try{
 switch(current){
@@ -92,6 +112,11 @@ case'unit':{let v=num('value'),k=$('kind').value,f=$('from').value,t=$('to').val
 }catch(e){r=String(e)}
 $('result').innerHTML=r;
 }
+let installPrompt=null;
+const installBtn=$('installBtn');
+window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();installPrompt=event;installBtn.hidden=false;});
+installBtn.addEventListener('click',async()=>{if(!installPrompt)return;installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;installBtn.hidden=true;});
+window.addEventListener('appinstalled',()=>{installBtn.hidden=true;});
 document.querySelectorAll('.tool').forEach(b=>b.addEventListener('click',()=>openTool(b.dataset.tool)));
 $('calculate').addEventListener('click',calculate);$('back').addEventListener('click',()=>{$('panel').classList.remove('active');$('home').style.display='grid';$('home').scrollIntoView({behavior:'smooth'});});
 $('themeBtn').addEventListener('click',()=>{let dark=document.body.dataset.dark!=='1';document.body.dataset.dark=dark?'1':'0';document.documentElement.style.setProperty('--bg',dark?'#0d1425':'#f4f7fc');document.documentElement.style.setProperty('--card',dark?'#18233a':'#fff');document.documentElement.style.setProperty('--ink',dark?'#edf2ff':'#15213b');document.documentElement.style.setProperty('--muted',dark?'#aab6d0':'#69758d');document.documentElement.style.setProperty('--line',dark?'#2c3a57':'#e5eaf3');$('themeBtn').textContent=dark?'☀':'☾';});
