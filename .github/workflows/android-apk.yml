@@ -56,7 +56,14 @@ jobs:
               canvas.alpha_composite(icon, ((size-icon.width)//2, (size-icon.height)//2))
               canvas.save(folder/"ic_launcher.png")
               canvas.save(folder/"ic_launcher_round.png")
-          print("ZENVIO launcher icons generated.")
+              # Adaptive icon foreground: transparent canvas with logo inside Android safe zone.
+              fg_size = round(size * 2.25)
+              foreground = Image.new("RGBA", (fg_size, fg_size), (0,0,0,0))
+              logo = source.copy()
+              logo.thumbnail((round(fg_size * 0.66), round(fg_size * 0.66)), Image.Resampling.LANCZOS)
+              foreground.alpha_composite(logo, ((fg_size-logo.width)//2, (fg_size-logo.height)//2))
+              foreground.save(folder/"ic_launcher_foreground.png")
+          print("ZENVIO legacy and adaptive launcher icons generated.")
           PY
       - run: npx cap sync android
       - run: cd android && chmod +x gradlew && ./gradlew assembleDebug
