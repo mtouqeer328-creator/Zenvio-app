@@ -31,6 +31,11 @@ footer{text-align:center;color:#8993a8;font-size:11px;padding:22px 8px}
 @media(min-width:650px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.wrap{padding-top:28px}.form{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:380px){.form{grid-template-columns:1fr}.field.full{grid-column:auto}.actions .ghost{padding:8px}}
 </style>
+
+<link rel="manifest" href="./manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ZENVIO">
+<link rel="apple-touch-icon" href="./zenvio-icon.png">
 </head>
 <body>
 <header><div class="top"><div class="brand"><div class="logo">Z</div><div><h1>ZENVIO</h1><p class="tag">ALL-IN-ONE SMART TOOLS</p></div></div><div class="actions"><button class="ghost" id="langBtn">اردو</button><button class="ghost" id="themeBtn">☾</button></div></div></header>
@@ -92,5 +97,14 @@ $('calculate').addEventListener('click',calculate);$('back').addEventListener('c
 $('themeBtn').addEventListener('click',()=>{let dark=document.body.dataset.dark!=='1';document.body.dataset.dark=dark?'1':'0';document.documentElement.style.setProperty('--bg',dark?'#0d1425':'#f4f7fc');document.documentElement.style.setProperty('--card',dark?'#18233a':'#fff');document.documentElement.style.setProperty('--ink',dark?'#edf2ff':'#15213b');document.documentElement.style.setProperty('--muted',dark?'#aab6d0':'#69758d');document.documentElement.style.setProperty('--line',dark?'#2c3a57':'#e5eaf3');$('themeBtn').textContent=dark?'☀':'☾';});
 $('langBtn').addEventListener('click',()=>{lang=lang==='en'?'ur':'en';document.documentElement.lang=lang;document.documentElement.dir=lang==='ur'?'rtl':'ltr';$('langBtn').textContent=lang==='en'?'اردو':'English';$('welcome').textContent=lang==='en'?'Simple, useful calculators — all in one place.':'آسان اور مفید کیلکولیٹر، ایک ہی جگہ۔';document.querySelectorAll('[data-en]').forEach(e=>e.textContent=e.dataset[lang]);if(current)openTool(current);});
 $('year').textContent=new Date().getFullYear();
+</script>
+
+<script>
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js')
+      .catch(error => console.error('ZENVIO offline setup failed:', error));
+  });
+}
 </script>
 </body></html>
