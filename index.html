@@ -132,4 +132,45 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   });
 }
 </script>
+
+<script type="module">
+import { AdMob, BannerAdSize, BannerAdPosition } from '@capacitor-community/admob';
+
+const ZENVIO_BANNER_ID = 'ca-app-pub-3685144280766770/5236938167';
+const ZENVIO_INTERSTITIAL_ID = 'ca-app-pub-3685144280766770/1608859359';
+let zenvioAdReady = false;
+let zenvioCalcCount = 0;
+
+async function setupZenvioAds() {
+  if (!window.Capacitor || !window.Capacitor.isNativePlatform()) return;
+  try {
+    await AdMob.initialize({ initializeForTesting: false });
+    await AdMob.showBanner({
+      adId: ZENVIO_BANNER_ID,
+      adSize: BannerAdSize.ADAPTIVE_BANNER,
+      position: BannerAdPosition.BOTTOM_CENTER,
+      margin: 0
+    });
+    await AdMob.prepareInterstitial({ adId: ZENVIO_INTERSTITIAL_ID });
+    zenvioAdReady = true;
+  } catch (error) {
+    console.warn('ZENVIO ads are not ready yet:', error);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', setupZenvioAds);
+document.getElementById('calculate')?.addEventListener('click', async () => {
+  if (!zenvioAdReady) return;
+  zenvioCalcCount++;
+  if (zenvioCalcCount % 5 === 0) {
+    try {
+      await AdMob.showInterstitial();
+      await AdMob.prepareInterstitial({ adId: ZENVIO_INTERSTITIAL_ID });
+    } catch (error) {
+      console.warn('Interstitial ad unavailable:', error);
+    }
+  }
+});
+</script>
+
 </body></html>
