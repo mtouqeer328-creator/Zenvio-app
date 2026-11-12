@@ -144,7 +144,7 @@ let zenvioCalcCount = 0;
 async function setupZenvioAds() {
   if (!window.Capacitor || !window.Capacitor.isNativePlatform()) return;
   try {
-    await AdMob.initialize({ initializeForTesting: false });
+    await AdMob.initialize({ initializeForTesting: true });
     await AdMob.showBanner({
       adId: ZENVIO_BANNER_ID,
       adSize: BannerAdSize.ADAPTIVE_BANNER,
