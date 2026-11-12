@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101a35">
+<title>ZENVIO — Smart Tools</title>
+<style>
+:root{--bg:#f4f7fc;--card:#fff;--ink:#15213b;--muted:#69758d;--line:#e5eaf3;--brand:#5b6cff;--brand2:#21b6a8;--shadow:0 12px 32px rgba(28,45,86,.09)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+header{background:linear-gradient(135deg,#101a35,#263d78 65%,#5668db);color:#fff;padding:26px 18px 30px;border-radius:0 0 28px 28px}
+.top{max-width:980px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:48px;height:48px;border-radius:15px;background:linear-gradient(135deg,#fff,#c9d4ff);color:#253b87;display:grid;place-items:center;font-size:24px;font-weight:900;box-shadow:0 8px 22px #080f2b55}
+h1{font-size:25px;margin:0;letter-spacing:1.8px}.tag{margin:3px 0 0;color:#d9e2ff;font-size:12px}
+.actions{display:flex;gap:8px}button,select,input{font:inherit}.ghost{border:1px solid #ffffff55;background:#ffffff16;color:#fff;padding:9px 12px;border-radius:12px;cursor:pointer}
+.wrap{max-width:980px;margin:0 auto;padding:20px 16px 40px}.welcome{margin:0 0 16px;font-size:14px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.tool{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;text-align:left;cursor:pointer;box-shadow:0 4px 15px #26385e08;transition:.15s}
+.tool:active{transform:scale(.98)}.ico{width:42px;height:42px;border-radius:13px;background:#eef0ff;display:grid;place-items:center;font-size:22px;margin-bottom:10px}
+.tool strong{display:block;font-size:14px}.tool small{color:var(--muted);display:block;margin-top:4px;font-size:11px}
+.panel{display:none;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:var(--shadow)}
+.panel.active{display:block}.panelhead{display:flex;align-items:center;gap:10px;margin-bottom:15px}.back{border:0;background:#eef1ff;color:#3448bd;border-radius:11px;padding:9px 12px;cursor:pointer}.panel h2{font-size:19px;margin:0}
+.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}
+label{font-size:12px;font-weight:700;color:#53617c}input,select{width:100%;border:1px solid #dce3ef;border-radius:11px;padding:12px;background:#fbfcff;color:var(--ink);outline:none}
+input:focus,select:focus{border-color:var(--brand);box-shadow:0 0 0 3px #5b6cff18}
+.primary{border:0;border-radius:12px;background:linear-gradient(135deg,var(--brand),#7885ff);color:white;padding:13px 16px;font-weight:750;cursor:pointer;width:100%;margin-top:14px}
+.result{margin-top:14px;padding:15px;border-radius:14px;background:#effaf8;border:1px solid #d5f1eb;min-height:52px;color:#11685c;font-weight:750;line-height:1.6}
+.note{font-size:11px;color:var(--muted);line-height:1.5;margin-top:10px}
+footer{text-align:center;color:#8993a8;font-size:11px;padding:22px 8px}
+[dir=rtl] .tool,[dir=rtl] .panel{text-align:right}[dir=rtl] .panelhead{flex-direction:row-reverse}
+@media(min-width:650px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.wrap{padding-top:28px}.form{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:380px){.form{grid-template-columns:1fr}.field.full{grid-column:auto}.actions .ghost{padding:8px}}
+</style>
+</head>
+<body>
+<header><div class="top"><div class="brand"><div class="logo">Z</div><div><h1>ZENVIO</h1><p class="tag">ALL-IN-ONE SMART TOOLS</p></div></div><div class="actions"><button class="ghost" id="langBtn">اردو</button><button class="ghost" id="themeBtn">☾</button></div></div></header>
+<main class="wrap">
+<p class="welcome" id="welcome">Simple, useful calculators — all in one place.</p>
+<section id="home" class="grid">
+<button class="tool" data-tool="age"><span class="ico">🎂</span><strong data-en="Age Calculator" data-ur="عمر کیلکولیٹر">Age Calculator</strong><small data-en="Years, months and days" data-ur="سال، مہینے اور دن">Years, months and days</small></button>
+<button class="tool" data-tool="emi"><span class="ico">🧾</span><strong data-en="EMI / Installment" data-ur="قسط کیلکولیٹر">EMI / Installment</strong><small data-en="Monthly payment planner" data-ur="ماہانہ قسط معلوم کریں">Monthly payment planner</small></button>
+<button class="tool" data-tool="profit"><span class="ico">📈</span><strong data-en="Profit & Loss" data-ur="منافع اور نقصان">Profit & Loss</strong><small data-en="Calculate margin and result" data-ur="منافع اور مارجن معلوم کریں">Calculate margin and result</small></button>
+<button class="tool" data-tool="discount"><span class="ico">🏷️</span><strong data-en="Discount" data-ur="ڈسکاؤنٹ">Discount</strong><small data-en="Sale price after discount" data-ur="ڈسکاؤنٹ کے بعد قیمت">Sale price after discount</small></button>
+<button class="tool" data-tool="percent"><span class="ico">％</span><strong data-en="Percentage" data-ur="فیصد">Percentage</strong><small data-en="Find percentage of a value" data-ur="کسی رقم کا فیصد">Find percentage of a value</small></button>
+<button class="tool" data-tool="electric"><span class="ico">💡</span><strong data-en="Electricity Bill" data-ur="بجلی بل">Electricity Bill</strong><small data-en="Estimate units × rate" data-ur="یونٹس اور ریٹ سے تخمینہ">Estimate units × rate</small></button>
+<button class="tool" data-tool="currency"><span class="ico">💱</span><strong data-en="Currency Converter" data-ur="کرنسی کنورٹر">Currency Converter</strong><small data-en="Convert using editable rates" data-ur="اپنے ریٹ کے مطابق تبدیل کریں">Convert using editable rates</small></button>
+<button class="tool" data-tool="unit"><span class="ico">📏</span><strong data-en="Unit Converter" data-ur="یونٹ کنورٹر">Unit Converter</strong><small data-en="Length, weight and temperature" data-ur="لمبائی، وزن اور درجہ حرارت">Length, weight and temperature</small></button>
+</section>
+<section id="panel" class="panel">
+<div class="panelhead"><button class="back" id="back">← Back</button><h2 id="panelTitle">Calculator</h2></div>
+<div id="fields" class="form"></div><button class="primary" id="calculate">Calculate</button><div class="result" id="result" aria-live="polite">Your result will appear here.</div><p class="note" id="note"></p>
+</section>
+<footer>© <span id="year"></span> ZENVIO · Smart tools made simple</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id); let current='',lang='en';
+const labels={age:['Age Calculator','عمر کیلکولیٹر'],emi:['EMI / Installment','قسط کیلکولیٹر'],profit:['Profit & Loss','منافع اور نقصان'],discount:['Discount Calculator','ڈسکاؤنٹ کیلکولیٹر'],percent:['Percentage Calculator','فیصد کیلکولیٹر'],electric:['Electricity Bill','بجلی بل کیلکولیٹر'],currency:['Currency Converter','کرنسی کنورٹر'],unit:['Unit Converter','یونٹ کنورٹر']};
+const field=(id,label,type='number',value='',extra='')=>`<div class="field ${extra}"><label for="${id}">${label}</label><input id="${id}" type="${type}" ${value!==''?`value="${value}"`:''} ${type==='number'?'step="any"':''}></div>`;
+const select=(id,label,opts,extra='')=>`<div class="field ${extra}"><label for="${id}">${label}</label><select id="${id}">${opts.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')}</select></div>`;
+function openTool(t){current=t;$('home').style.display='none';$('panel').classList.add('active');$('panelTitle').textContent=labels[t][lang==='en'?0:1];$('result').textContent=lang==='en'?'Your result will appear here.':'نتیجہ یہاں ظاہر ہوگا۔';$('note').textContent='';let f='';
+if(t==='age')f=field('dob',lang==='en'?'Date of birth':'تاریخ پیدائش','date','','full');
+if(t==='emi')f=field('principal',lang==='en'?'Total sale / financed amount':'کل رقم')+field('months',lang==='en'?'Number of months':'مہینوں کی تعداد')+field('advance',lang==='en'?'Advance payment (optional)':'ایڈوانس (اختیاری)');
+if(t==='profit')f=field('cost',lang==='en'?'Cost price':'خرید قیمت')+field('sale',lang==='en'?'Selling price':'فروخت قیمت');
+if(t==='discount')f=field('price',lang==='en'?'Original price':'اصل قیمت')+field('rate',lang==='en'?'Discount (%)':'ڈسکاؤنٹ فیصد');
+if(t==='percent')f=field('base',lang==='en'?'Total value':'کل رقم')+field('percent',lang==='en'?'Percentage (%)':'فیصد');
+if(t==='electric')f=field('units',lang==='en'?'Units consumed':'استعمال شدہ یونٹس')+field('unitrate',lang==='en'?'Rate per unit (Rs.)':'فی یونٹ ریٹ (روپے)')+field('fixed',lang==='en'?'Other charges (optional)':'دیگر چارجز (اختیاری)');
+if(t==='currency')f=field('amount',lang==='en'?'Amount':'رقم')+select('from',lang==='en'?'From':'سے',[['PKR','PKR'],['USD','USD'],['SAR','SAR'],['AED','AED'],['GBP','GBP'],['EUR','EUR']])+select('to',lang==='en'?'To':'میں',[['USD','USD'],['PKR','PKR'],['SAR','SAR'],['AED','AED'],['GBP','GBP'],['EUR','EUR']])+field('rate',lang==='en'?'Exchange rate: 1 unit of FROM = ? TO':'تبادلہ ریٹ: FROM کا 1 = کتنے TO؟');
+if(t==='unit')f=select('kind',lang==='en'?'Measurement':'پیمائش',[['length','Length'],['weight','Weight'],['temperature','Temperature']])+field('value',lang==='en'?'Value':'قدر')+select('from',lang==='en'?'From':'سے',[])+select('to',lang==='en'?'To':'میں',[]);
+$('fields').innerHTML=f;
+if(t==='currency'){$('rate').value='';$('note').textContent=lang==='en'?'Enter the current exchange rate yourself. Rates are not live.':'موجودہ ایکسچینج ریٹ خود درج کریں۔ ریٹس لائیو نہیں ہیں۔';$('from').addEventListener('change',()=>{$('rate').value='';});}
+if(t==='unit'){updateUnits();$('kind').addEventListener('change',updateUnits);}
+$('panel').scrollIntoView({behavior:'smooth',block:'start'});}
+function updateUnits(){let k=$('kind').value,sets={length:[['m','Meters'],['km','Kilometers'],['cm','Centimeters'],['ft','Feet'],['in','Inches']],weight:[['kg','Kilograms'],['g','Grams'],['lb','Pounds'],['tonne','Metric tonnes']],temperature:[['C','Celsius'],['F','Fahrenheit'],['K','Kelvin']]};let opts=sets[k];['from','to'].forEach(id=>$(id).innerHTML=opts.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join(''));if(k==='length')$('to').value='km';if(k==='weight')$('to').value='g';if(k==='temperature')$('to').value='F';}
+const num=id=>{let v=Number($(id).value);return Number.isFinite(v)?v:NaN},fmt=n=>Number(n).toLocaleString(undefined,{maximumFractionDigits:2});
+function calculate(){let r='',n1,n2;
+try{
+switch(current){
+case'age':{let d=new Date($('dob').value+'T00:00:00');if(!$('dob').value||isNaN(d))throw'Please select a valid date of birth.';let now=new Date();if(d>now)throw'Date of birth cannot be in the future.';let y=now.getFullYear()-d.getFullYear(),m=now.getMonth()-d.getMonth(),day=now.getDate()-d.getDate();if(day<0){m--;let prev=new Date(now.getFullYear(),now.getMonth(),0);day+=prev.getDate()}if(m<0){y--;m+=12}r=`${y} years, ${m} months, ${day} days`;break}
+case'emi':{let p=num('principal')-(( $('advance').value==='')?0:num('advance')),mo=num('months');if(!(p>=0&&mo>0))throw'Enter a valid amount and number of months.';r=`Monthly installment: Rs. ${fmt(p/mo)}<br>Total financed: Rs. ${fmt(p)}`;break}
+case'profit':{let c=num('cost'),s=num('sale');if(!(c>=0&&s>=0))throw'Enter valid prices.';let diff=s-c;r=diff>=0?`Profit: Rs. ${fmt(diff)}<br>Profit margin: ${fmt(s?diff/s*100:0)}%`:`Loss: Rs. ${fmt(-diff)}<br>Loss percentage: ${fmt(c?(-diff)/c*100:0)}%`;break}
+case'discount':{let p=num('price'),d=num('rate');if(!(p>=0&&d>=0&&d<=100))throw'Enter a discount between 0 and 100%.';r=`Discount: Rs. ${fmt(p*d/100)}<br>Final price: Rs. ${fmt(p*(1-d/100))}`;break}
+case'percent':{let b=num('base'),p=num('percent');if(!Number.isFinite(b)||!Number.isFinite(p))throw'Enter both values.';r=`${fmt(p)}% of ${fmt(b)} = ${fmt(b*p/100)}`;break}
+case'electric':{let u=num('units'),rate=num('unitrate'),extra=$('fixed').value===''?0:num('fixed');if(!(u>=0&&rate>=0&&extra>=0))throw'Enter valid values.';r=`Energy cost: Rs. ${fmt(u*rate)}<br>Estimated total: Rs. ${fmt(u*rate+extra)}`;$('note').textContent='Estimate only; taxes, slabs, fuel adjustments and other utility charges may apply.';break}
+case'currency':{let a=num('amount'),rate=num('rate');if(!(a>=0&&rate>0))throw'Enter amount and a positive exchange rate.';r=`${fmt(a)} ${$('from').value} = ${fmt(a*rate)} ${$('to').value}`;break}
+case'unit':{let v=num('value'),k=$('kind').value,f=$('from').value,t=$('to').value;if(!Number.isFinite(v))throw'Enter a valid value.';let out;if(k==='length'){let m={m:1,km:1000,cm:.01,ft:.3048,in:.0254};out=v*m[f]/m[t]}else if(k==='weight'){let m={kg:1,g:.001,lb:.45359237,tonne:1000};out=v*m[f]/m[t]}else{let c=f==='C'?v:f==='F'?(v-32)*5/9:v-273.15;out=t==='C'?c:t==='F'?c*9/5+32:c+273.15}r=`Result: ${fmt(out)} ${t}`;break}
+}
+}catch(e){r=String(e)}
+$('result').innerHTML=r;
+}
+document.querySelectorAll('.tool').forEach(b=>b.addEventListener('click',()=>openTool(b.dataset.tool)));
+$('calculate').addEventListener('click',calculate);$('back').addEventListener('click',()=>{$('panel').classList.remove('active');$('home').style.display='grid';$('home').scrollIntoView({behavior:'smooth'});});
+$('themeBtn').addEventListener('click',()=>{let dark=document.body.dataset.dark!=='1';document.body.dataset.dark=dark?'1':'0';document.documentElement.style.setProperty('--bg',dark?'#0d1425':'#f4f7fc');document.documentElement.style.setProperty('--card',dark?'#18233a':'#fff');document.documentElement.style.setProperty('--ink',dark?'#edf2ff':'#15213b');document.documentElement.style.setProperty('--muted',dark?'#aab6d0':'#69758d');document.documentElement.style.setProperty('--line',dark?'#2c3a57':'#e5eaf3');$('themeBtn').textContent=dark?'☀':'☾';});
+$('langBtn').addEventListener('click',()=>{lang=lang==='en'?'ur':'en';document.documentElement.lang=lang;document.documentElement.dir=lang==='ur'?'rtl':'ltr';$('langBtn').textContent=lang==='en'?'اردو':'English';$('welcome').textContent=lang==='en'?'Simple, useful calculators — all in one place.':'آسان اور مفید کیلکولیٹر، ایک ہی جگہ۔';document.querySelectorAll('[data-en]').forEach(e=>e.textContent=e.dataset[lang]);if(current)openTool(current);});
+$('year').textContent=new Date().getFullYear();
+</script>
+</body></html>
