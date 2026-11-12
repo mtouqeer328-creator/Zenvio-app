@@ -24,6 +24,21 @@ jobs:
       - run: npm install
       - run: npm run build
       - run: npx cap add android
+      - name: Configure Google AdMob Android application ID
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          manifest = Path("android/app/src/main/AndroidManifest.xml")
+          text = manifest.read_text()
+          meta = '<meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-3685144280766770~6985134103" />'
+          if "com.google.android.gms.ads.APPLICATION_ID" not in text:
+              text = re.sub(r'(<application\\b[^>]*>)', r'\\1\\n        ' + meta, text, count=1)
+          manifest.write_text(text)
+          if "com.google.android.gms.ads.APPLICATION_ID" not in manifest.read_text():
+              raise SystemExit("Could not add AdMob application ID to AndroidManifest.xml")
+          print("AdMob application ID configured in AndroidManifest.xml")
+          PY
       - run: npx cap sync android
       - run: cd android && chmod +x gradlew && ./gradlew assembleDebug
       - uses: actions/upload-artifact@v4
