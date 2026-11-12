@@ -2,8 +2,16 @@
   "name": "ZENVIO",
   "short_name": "ZENVIO",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#1565c0",
-  "description": "ZENVIO Mobile App"
+  "background_color": "#061B55",
+  "theme_color": "#0645C0",
+  "description": "ZENVIO Mobile App",
+  "icons": [
+    {
+      "src": "./zenvio-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
