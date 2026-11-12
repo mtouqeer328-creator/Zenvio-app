@@ -1,17 +1,19 @@
 {
-  "name": "ZENVIO",
+  "name": "ZENVIO \u2014 Smart Tools",
   "short_name": "ZENVIO",
+  "description": "All-in-one smart calculators and tools",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#061B55",
-  "theme_color": "#0645C0",
-  "description": "ZENVIO Mobile App",
+  "orientation": "portrait",
+  "background_color": "#101a35",
+  "theme_color": "#101a35",
   "icons": [
     {
       "src": "./zenvio-icon.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
