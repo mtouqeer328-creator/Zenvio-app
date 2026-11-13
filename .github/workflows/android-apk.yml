@@ -97,7 +97,7 @@ jobs:
           ''')
           
           # Force the native launch theme (Android 11 and below) to use this launch screen.
-          for styles in res.glob("values*/styles.xml"):
+          for styles in list(res.glob("values*/styles.xml")) + list(res.glob("values*/themes.xml")):
               xml = styles.read_text()
               if "AppTheme.NoActionBarLaunch" in xml:
                   pattern = r'(<style[^>]*name="AppTheme\.NoActionBarLaunch"[^>]*>)(.*?)(</style>)'
@@ -112,7 +112,7 @@ jobs:
                   xml = re.sub(pattern, patch, xml, flags=re.S)
                   styles.write_text(xml)
 
-          print("Native ZENVIO splash screen configured for Android 11 and Android 12+.")
+          print("Native ZENVIO splash screen configured in styles/themes XML for Android 11 and Android 12+.")
           PY
       - run: npx cap sync android
       - run: cd android && chmod +x gradlew && ./gradlew assembleDebug
