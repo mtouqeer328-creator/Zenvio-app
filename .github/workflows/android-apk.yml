@@ -9,6 +9,7 @@ on:
       - 'capacitor.config.ts'
       - 'vite.config.js'
       - 'zenvio-icon.png'
+      - 'google-services.json'
       - '.github/workflows/android-apk.yml'
 jobs:
   build:
@@ -25,6 +26,41 @@ jobs:
       - run: npm install
       - run: npm run build
       - run: npx cap add android
+      - name: Configure Firebase Analytics
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          config = Path("google-services.json")
+          if not config.exists():
+              raise SystemExit("google-services.json is missing from repository root.")
+          import json
+          data = json.loads(config.read_text())
+          package_name = data["client"][0]["client_info"]["android_client_info"]["package_name"]
+          if package_name != "com.zenvio.smarttools":
+              raise SystemExit(f"Firebase package mismatch: {package_name}")
+
+          app_config = Path("android/app/google-services.json")
+          app_config.parent.mkdir(parents=True, exist_ok=True)
+          app_config.write_text(config.read_text())
+
+          root_gradle = Path("android/build.gradle")
+          root_text = root_gradle.read_text()
+          if "com.google.gms:google-services" not in root_text:
+              match = re.search(r"(buildscript\\s*\\{.*?dependencies\\s*\\{)", root_text, re.S)
+              if not match:
+                  raise SystemExit("Could not locate buildscript dependencies in android/build.gradle")
+              insert_at = match.end()
+              root_text = root_text[:insert_at] + "\\n        classpath 'com.google.gms:google-services:4.4.2'" + root_text[insert_at:]
+              root_gradle.write_text(root_text)
+
+          app_gradle = Path("android/app/build.gradle")
+          app_text = app_gradle.read_text()
+          if "com.google.gms.google-services" not in app_text:
+              app_gradle.write_text(app_text.rstrip() + "\\n\\napply plugin: 'com.google.gms.google-services'\\n")
+          print("Firebase configuration and Google Services Gradle plugin configured.")
+          PY
       - name: Configure AdMob application ID
         run: |
           python3 - <<'PY'
