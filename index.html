@@ -92,7 +92,7 @@ if(t==='bills'){
  category.addEventListener('change',fillBillProviders);provider.addEventListener('change',showBillHint);fillBillProviders();
  open.onclick=()=>{const p=billProviders[category.value].find(x=>x[0]===provider.value);window.open(p[2],'_blank','noopener,noreferrer');};
 }
-$('calculate').hidden=t==='rewards'||t==='adfree'||t==='bills';$('result').style.display=(t==='rewards'||t==='adfree')?'none':'block';$('note').style.display=(t==='rewards'||t==='adfree')?'none':'block';
+$('calculate').hidden=t==='rewards'||t==='adfree'||t==='bills';$('result').style.display=(t==='rewards'||t==='adfree'||t==='bills')?'none':'block';$('note').style.display=(t==='rewards'||t==='adfree'||t==='bills')?'none':'block';
 if(t==='rewards')window.dispatchEvent(new Event('zenvio-rewards-open'));
 if(t==='adfree')window.dispatchEvent(new Event('zenvio-adfree-open'));
 $('panel').scrollIntoView({behavior:'smooth',block:'start'});}
