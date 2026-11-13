@@ -234,6 +234,42 @@ window.addEventListener('zenvio-rewards-open', () => {
   };
 });
 
+window.addEventListener('zenvio-adfree-open', () => {
+  const balance = Number(localStorage.getItem('zenvioCoins') || 0);
+  const coins = document.getElementById('adFreeCoins');
+  const progress = document.getElementById('adFreeProgress');
+  const status = document.getElementById('adFreeStatus');
+  const claim = document.getElementById('claimAdFreeBtn');
+  const goRewards = document.getElementById('goRewardsBtn');
+  if (!coins || !progress || !status || !claim) return;
+  coins.textContent = String(balance);
+  progress.style.width = Math.min(100, balance) + '%';
+  if (zenvioPremiumActive) {
+    status.textContent = 'Ad-Free is already active on this device.';
+    claim.textContent = 'Ad-Free Activated ✓';
+    claim.disabled = true;
+  } else {
+    status.textContent = balance >= 100 ? 'You have enough coins to unlock Ad-Free.' : 'Collect ' + (100 - balance) + ' more coins. Every completed video gives 10 coins.';
+  }
+  claim.onclick = async () => {
+    const currentBalance = Number(localStorage.getItem('zenvioCoins') || 0);
+    if (currentBalance < 100) {
+      status.textContent = 'You need ' + (100 - currentBalance) + ' more coins. Watch videos in Rewards Center.';
+      return;
+    }
+    localStorage.setItem('zenvioCoins', String(currentBalance - 100));
+    localStorage.setItem('zenvioAdFree', '1');
+    zenvioPremiumActive = true;
+    try { await AdMob.hideBanner(); } catch (_) {}
+    coins.textContent = String(currentBalance - 100);
+    progress.style.width = Math.min(100, currentBalance - 100) + '%';
+    status.textContent = 'Ad-Free unlocked! Banner and full-screen ads are now disabled on this device.';
+    claim.textContent = 'Ad-Free Activated ✓';
+    claim.disabled = true;
+  };
+  if (goRewards) goRewards.onclick = () => openTool('rewards');
+});
+
 document.getElementById('calculate')?.addEventListener('click', async () => {
   if (!zenvioAdReady || zenvioPremiumActive) return;
   zenvioCalcCount++;
