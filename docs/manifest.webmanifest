@@ -1,0 +1,25 @@
+{
+  "name": "ZENVIO — Smart Utility App",
+  "short_name": "ZENVIO",
+  "description": "Smart everyday tools in one simple app.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#101a35",
+  "theme_color": "#101a35",
+  "icons": [
+    {
+      "src": "../zenvio-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../zenvio-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
