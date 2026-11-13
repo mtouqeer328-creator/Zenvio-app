@@ -96,8 +96,8 @@ jobs:
           for styles in res.glob("values*/styles.xml"):
               xml = styles.read_text()
               xml = re.sub(
-                  r'(<item\\s+name="(?:android:)?windowSplashScreenAnimatedIcon"[^>]*>)[^<]*(</item>)',
-                  r'\\1@drawable/splash\\2',
+                  r'(<item\s+name="(?:android:)?windowSplashScreenAnimatedIcon"[^>]*>)[^<]*(</item>)',
+                  r'\1@drawable/splash\2',
                   xml
               )
               styles.write_text(xml)
