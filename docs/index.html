@@ -4,6 +4,10 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#101a35">
 <meta name="description" content="ZENVIO — Smart everyday tools in one simple app. Calculator, currency converter, utility tools and rewards.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="../zenvio-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>ZENVIO — Smart Utility App</title>
 <style>
 :root{--navy:#101a35;--blue:#4668ff;--cyan:#63d7e8;--ink:#17213b;--muted:#66718a;--paper:#f5f7ff}
@@ -28,7 +32,7 @@ footer{background:#0b1329;color:#b7c3df;padding:30px 24px}footer .wrap{display:f
 <body>
 <header>
 <nav><div class="brand"><img src="https://raw.githubusercontent.com/mtouqeer328-creator/Zenvio-app/main/zenvio-icon.png" alt="ZENVIO logo"> ZENVIO</div><div class="links"><a href="#features">Features</a><a href="#download">Download</a><a href="privacy.html">Privacy</a></div></nav>
-<div class="hero"><div><span class="pill">SMART TOOLS • ONE APP</span><h1>Make everyday tasks <span style="color:var(--cyan)">simpler.</span></h1><p>ZENVIO brings useful everyday tools together in one clean, easy-to-use app. Calculate, convert currencies and explore handy utilities — all from one place.</p><div class="actions"><a class="btn primary" href="https://github.com/mtouqeer328-creator/Zenvio-app/actions/runs/43376703622" target="_blank" rel="noopener">Get ZENVIO APK ↗</a><a class="btn secondary" href="#features">Explore features</a></div><div class="note">Android app • APK download via GitHub Actions</div></div>
+<div class="hero"><div><span class="pill">SMART TOOLS • ONE APP</span><h1>Make everyday tasks <span style="color:var(--cyan)">simpler.</span></h1><p>ZENVIO brings useful everyday tools together in one clean, easy-to-use app. Calculate, convert currencies and explore handy utilities — all from one place.</p><div class="actions"><a class="btn primary" href="https://github.com/mtouqeer328-creator/Zenvio-app/actions/runs/43376703622" target="_blank" rel="noopener">Get ZENVIO APK ↗</a><a class="btn secondary" href="#features">Explore features</a><button class="btn secondary" id="installApp" type="button" style="background:transparent;cursor:pointer">Install Website ⬇</button></div><div class="note">Android app • APK download via GitHub Actions</div></div>
 <div class="phone"><div class="phone-top"><span>9:41</span><span>● ● ●</span></div><div class="appmark">Z</div><h3>Welcome to ZENVIO</h3><small>Smart tools for daily life</small><div class="tiles"><div class="tile"><b>＋</b>Calculator</div><div class="tile"><b>⇄</b>Currency</div><div class="tile"><b>▤</b>Utility tools</div><div class="tile"><b>★</b>Reward Hub</div></div></div>
 </div>
 </header>
@@ -42,4 +46,29 @@ footer{background:#0b1329;color:#b7c3df;padding:30px 24px}footer .wrap{display:f
 </div></div></section>
 <section class="soft" id="download"><div class="wrap"><div class="downloadbox"><div><span class="eyebrow" style="color:#8fa4ff">Get started</span><h2>Try ZENVIO today.</h2><p>Download the latest available Android build from the project's GitHub Actions page. Open the successful build, then choose the ZENVIO-Android-APK artifact.</p><p class="note">Android may ask you to allow installation from your browser or file manager. Only install builds from the official ZENVIO repository.</p></div><a class="btn primary" href="https://github.com/mtouqeer328-creator/Zenvio-app/actions" target="_blank" rel="noopener">Download APK ↗</a></div></div></section>
 <footer><div class="wrap"><div>© 2026 ZENVIO — Smart Utility App</div><div><a href="privacy.html">Privacy Policy</a><a href="https://github.com/mtouqeer328-creator/Zenvio-app" target="_blank" rel="noopener">GitHub</a></div></div></footer>
+<script>
+let installPromptEvent = null;
+const installButton = document.getElementById('installApp');
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  installPromptEvent = event;
+  installButton.textContent = 'Install ZENVIO ⬇';
+});
+installButton.addEventListener('click', async () => {
+  if (installPromptEvent) {
+    installPromptEvent.prompt();
+    await installPromptEvent.userChoice;
+    installPromptEvent = null;
+    installButton.textContent = 'Install Website ⬇';
+  } else {
+    alert('Chrome mein 3 dots (⋮) kholen aur “Install app” ya “Add to Home screen” select karein. Agar option na aaye to page reload karke kuch seconds intezar karein.');
+  }
+});
+window.addEventListener('appinstalled', () => {
+  installButton.textContent = 'ZENVIO Installed ✓';
+});
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+}
+</script>
 </body></html>
