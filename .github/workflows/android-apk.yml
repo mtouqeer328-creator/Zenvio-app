@@ -87,7 +87,7 @@ jobs:
           # Explicitly create the launch layer-list instead of relying on a template file.
           (drawable / "launch_background.xml").write_text('''<?xml version="1.0" encoding="utf-8"?>
           <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-              <item android:drawable="#101a35" />
+              <item>\n                  <shape android:shape="rectangle">\n                      <solid android:color="#101a35" />\n                  </shape>\n              </item>
               <item>
                   <bitmap
                       android:gravity="center"
