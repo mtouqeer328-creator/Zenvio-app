@@ -297,4 +297,26 @@ document.getElementById('calculate')?.addEventListener('click', async () => {
 });
 </script>
 
+
+<script type="module">
+import { FirebaseAnalytics } from '@capacitor-community/firebase-analytics';
+const track = (name, params = {}) => {
+  try { FirebaseAnalytics.logEvent({ name, params }); } catch (e) { console.warn('Firebase Analytics:', e); }
+};
+window.zenvioTrack = track;
+track('zenvio_app_started', { app_version: '1.1' });
+document.addEventListener('click', (event) => {
+  const tool = event.target.closest('.tool');
+  if (tool?.dataset?.tool) track('feature_open', { feature_name: tool.dataset.tool });
+});
+document.getElementById('calculate')?.addEventListener('click', () => {
+  const title = document.getElementById('panelTitle')?.textContent || 'calculator';
+  track('calculation_used', { feature_name: title.slice(0, 40) });
+});
+document.addEventListener('click', (event) => {
+  if (event.target.closest('#watchRewardBtn')) track('reward_video_requested');
+  if (event.target.closest('#unlockPremiumBtn, #claimAdFreeBtn')) track('ad_free_unlock_requested');
+});
+</script>
+
 </body></html>
