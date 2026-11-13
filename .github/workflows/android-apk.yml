@@ -70,29 +70,39 @@ jobs:
           python3 - <<'PY'
           from PIL import Image
           from pathlib import Path
+          import re
+
           source = Image.open("zenvio-icon.png").convert("RGBA")
-          # Capacitor's legacy launch screen uses drawable/splash.png.
-          drawable = Path("android/app/src/main/res/drawable")
+          res = Path("android/app/src/main/res")
+
+          # Legacy launch image (Android 11 and below).
+          drawable = res / "drawable"
           drawable.mkdir(parents=True, exist_ok=True)
-          splash = source.copy()
-          splash.thumbnail((512, 512), Image.Resampling.LANCZOS)
-          canvas = Image.new("RGBA", (512, 512), (255,255,255,255))
-          canvas.alpha_composite(splash, ((512-splash.width)//2, (512-splash.height)//2))
+          logo = source.copy()
+          logo.thumbnail((512, 512), Image.Resampling.LANCZOS)
+          canvas = Image.new("RGBA", (512, 512), (255, 255, 255, 255))
+          canvas.alpha_composite(logo, ((512-logo.width)//2, (512-logo.height)//2))
           canvas.save(drawable / "splash.png")
+
+          # Make the legacy launch layout use the new logo.
           launch = drawable / "launch_background.xml"
           if launch.exists():
               xml = launch.read_text()
-              # Keep the existing launch layout/background but ensure its bitmap uses our logo.
-              import re
-              xml, count = re.subn(r'android:src="@drawable/[^"]+"', 'android:src="@drawable/splash"', xml)
-              if count:
-                  launch.write_text(xml)
-          # Android 12+ system splash icon, when present.
-          for styles in Path("android/app/src/main/res").glob("values-v31/styles.xml"):
+              xml = re.sub(r'android:src="@drawable/[^"]+"',
+                           'android:src="@drawable/splash"', xml)
+              launch.write_text(xml)
+
+          # Android 12+ uses this exact theme attribute, not the launcher icon field.
+          for styles in res.glob("values*/styles.xml"):
               xml = styles.read_text()
-              xml = xml.replace('@mipmap/ic_launcher', '@drawable/splash')
+              xml = re.sub(
+                  r'(<item\\s+name="(?:android:)?windowSplashScreenAnimatedIcon"[^>]*>)[^<]*(</item>)',
+                  r'\\1@drawable/splash\\2',
+                  xml
+              )
               styles.write_text(xml)
-          print("ZENVIO launch-screen logo applied.")
+
+          print("ZENVIO splash logo applied to legacy and Android 12+ themes.")
           PY
       - run: npx cap sync android
       - run: cd android && chmod +x gradlew && ./gradlew assembleDebug
