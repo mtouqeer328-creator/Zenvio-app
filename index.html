@@ -143,29 +143,96 @@ import { AdMob, BannerAdSize, BannerAdPosition } from '@capacitor-community/admo
 
 const ZENVIO_BANNER_ID = 'ca-app-pub-3940256099942544/6300978111';
 const ZENVIO_INTERSTITIAL_ID = 'ca-app-pub-3940256099942544/1033173712';
+const ZENVIO_REWARDED_ID = 'ca-app-pub-3940256099942544/5224354917';
 let zenvioAdReady = false;
+let zenvioRewardReady = false;
 let zenvioCalcCount = 0;
+let zenvioPremiumActive = localStorage.getItem('zenvioAdFree') === '1';
 
+function updateRewardWallet() {
+  const balance = Number(localStorage.getItem('zenvioCoins') || 0);
+  const coinEl = document.getElementById('zenvioCoins');
+  if (coinEl) coinEl.textContent = String(balance);
+}
+async function prepareZenvioReward() {
+  try {
+    await AdMob.prepareRewardVideoAd({ adId: ZENVIO_REWARDED_ID });
+    zenvioRewardReady = true;
+  } catch (error) {
+    zenvioRewardReady = false;
+    console.warn('Reward video is not ready:', error);
+  }
+}
 async function setupZenvioAds() {
   if (!window.Capacitor || !window.Capacitor.isNativePlatform()) return;
   try {
     await AdMob.initialize({ initializeForTesting: true });
-    await AdMob.showBanner({
-      adId: ZENVIO_BANNER_ID,
-      adSize: BannerAdSize.ADAPTIVE_BANNER,
-      position: BannerAdPosition.BOTTOM_CENTER,
-      margin: 0
-    });
-    await AdMob.prepareInterstitial({ adId: ZENVIO_INTERSTITIAL_ID });
-    zenvioAdReady = true;
+    if (!zenvioPremiumActive) {
+      await AdMob.showBanner({
+        adId: ZENVIO_BANNER_ID,
+        adSize: BannerAdSize.ADAPTIVE_BANNER,
+        position: BannerAdPosition.BOTTOM_CENTER,
+        margin: 0
+      });
+      await AdMob.prepareInterstitial({ adId: ZENVIO_INTERSTITIAL_ID });
+      zenvioAdReady = true;
+    }
+    await prepareZenvioReward();
   } catch (error) {
     console.warn('ZENVIO ads are not ready yet:', error);
   }
 }
 
 document.addEventListener('DOMContentLoaded', setupZenvioAds);
+window.addEventListener('zenvio-rewards-open', () => {
+  updateRewardWallet();
+  const watch = document.getElementById('watchRewardBtn');
+  const unlock = document.getElementById('unlockPremiumBtn');
+  const status = document.getElementById('rewardStatus');
+  if (!watch || !unlock || !status) return;
+
+  watch.onclick = async () => {
+    if (!window.Capacitor || !window.Capacitor.isNativePlatform()) {
+      status.textContent = 'Reward videos work in the installed Android app.';
+      return;
+    }
+    watch.disabled = true;
+    status.textContent = 'Loading rewarded video…';
+    try {
+      if (!zenvioRewardReady) await prepareZenvioReward();
+      if (!zenvioRewardReady) throw new Error('Video is not available right now. Please try again later.');
+      const reward = await AdMob.showRewardVideoAd();
+      if (!reward || Number(reward.amount) <= 0) throw new Error('No reward was earned. Please watch the full video.');
+      const balance = Number(localStorage.getItem('zenvioCoins') || 0) + 10;
+      localStorage.setItem('zenvioCoins', String(balance));
+      updateRewardWallet();
+      status.textContent = 'Success! 10 coins added to your wallet.';
+      await prepareZenvioReward();
+    } catch (error) {
+      status.textContent = error?.message || 'Reward video unavailable. Please try again.';
+      await prepareZenvioReward();
+    } finally {
+      watch.disabled = false;
+    }
+  };
+
+  unlock.onclick = async () => {
+    const balance = Number(localStorage.getItem('zenvioCoins') || 0);
+    if (balance < 100) {
+      status.textContent = 'You need ' + (100 - balance) + ' more coins to unlock Ad-Free mode.';
+      return;
+    }
+    localStorage.setItem('zenvioCoins', String(balance - 100));
+    localStorage.setItem('zenvioAdFree', '1');
+    zenvioPremiumActive = true;
+    try { await AdMob.hideBanner(); } catch (_) {}
+    updateRewardWallet();
+    status.textContent = 'Ad-Free mode unlocked! Banner and interstitial ads are now disabled on this device.';
+  };
+});
+
 document.getElementById('calculate')?.addEventListener('click', async () => {
-  if (!zenvioAdReady) return;
+  if (!zenvioAdReady || zenvioPremiumActive) return;
   zenvioCalcCount++;
   if (zenvioCalcCount % 5 === 0) {
     try {
