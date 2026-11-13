@@ -48,17 +48,17 @@ jobs:
           root_gradle = Path("android/build.gradle")
           root_text = root_gradle.read_text()
           if "com.google.gms:google-services" not in root_text:
-              match = re.search(r"(buildscript\\s*\\{.*?dependencies\\s*\\{)", root_text, re.S)
+              match = re.search(r"(buildscript\s*\{.*?dependencies\s*\{)", root_text, re.S)
               if not match:
                   raise SystemExit("Could not locate buildscript dependencies in android/build.gradle")
               insert_at = match.end()
-              root_text = root_text[:insert_at] + "\\n        classpath 'com.google.gms:google-services:4.4.2'" + root_text[insert_at:]
+              root_text = root_text[:insert_at] + "\n        classpath 'com.google.gms:google-services:4.4.2'" + root_text[insert_at:]
               root_gradle.write_text(root_text)
 
           app_gradle = Path("android/app/build.gradle")
           app_text = app_gradle.read_text()
           if "com.google.gms.google-services" not in app_text:
-              app_gradle.write_text(app_text.rstrip() + "\\n\\napply plugin: 'com.google.gms.google-services'\\n")
+              app_gradle.write_text(app_text.rstrip() + "\n\napply plugin: 'com.google.gms.google-services'\n")
           print("Firebase configuration and Google Services Gradle plugin configured.")
           PY
       - name: Configure AdMob application ID
@@ -71,7 +71,7 @@ jobs:
           if "com.google.android.gms.ads.APPLICATION_ID" not in text:
               if "</application>" not in text:
                   raise SystemExit("Android application tag not found")
-              text = text.replace("</application>", meta + "\\n    </application>", 1)
+              text = text.replace("</application>", meta + "\n    </application>", 1)
           manifest.write_text(text)
           print("AdMob application ID added.")
           PY
