@@ -75,34 +75,44 @@ jobs:
           source = Image.open("zenvio-icon.png").convert("RGBA")
           res = Path("android/app/src/main/res")
 
-          # Legacy launch image (Android 11 and below).
+          # Prepare a centered, square splash artwork for older Android versions.
           drawable = res / "drawable"
           drawable.mkdir(parents=True, exist_ok=True)
           logo = source.copy()
-          logo.thumbnail((512, 512), Image.Resampling.LANCZOS)
-          canvas = Image.new("RGBA", (512, 512), (255, 255, 255, 255))
+          logo.thumbnail((420, 420), Image.Resampling.LANCZOS)
+          canvas = Image.new("RGBA", (512, 512), (16, 26, 53, 255))
           canvas.alpha_composite(logo, ((512-logo.width)//2, (512-logo.height)//2))
           canvas.save(drawable / "splash.png")
 
-          # Make the legacy launch layout use the new logo.
-          launch = drawable / "launch_background.xml"
-          if launch.exists():
-              xml = launch.read_text()
-              xml = re.sub(r'android:src="@drawable/[^"]+"',
-                           'android:src="@drawable/splash"', xml)
-              launch.write_text(xml)
-
-          # Android 12+ uses this exact theme attribute, not the launcher icon field.
+          # Explicitly create the launch layer-list instead of relying on a template file.
+          (drawable / "launch_background.xml").write_text('''<?xml version="1.0" encoding="utf-8"?>
+          <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+              <item android:drawable="#101a35" />
+              <item>
+                  <bitmap
+                      android:gravity="center"
+                      android:src="@drawable/splash" />
+              </item>
+          </layer-list>
+          ''')
+          
+          # Force the native launch theme (Android 11 and below) to use this launch screen.
           for styles in res.glob("values*/styles.xml"):
               xml = styles.read_text()
-              xml = re.sub(
-                  r'(<item\s+name="(?:android:)?windowSplashScreenAnimatedIcon"[^>]*>)[^<]*(</item>)',
-                  r'\1@drawable/splash\2',
-                  xml
-              )
-              styles.write_text(xml)
+              if "AppTheme.NoActionBarLaunch" in xml:
+                  pattern = r'(<style[^>]*name="AppTheme\.NoActionBarLaunch"[^>]*>)(.*?)(</style>)'
+                  def patch(match):
+                      body = match.group(2)
+                      body = re.sub(r'<item\s+name="android:windowBackground"[^>]*>.*?</item>', '', body, flags=re.S)
+                      body += '\n        <item name="android:windowBackground">@drawable/launch_background</item>\n'
+                      # Android 12+ splash screen attributes.
+                      body = re.sub(r'<item\s+name="(?:android:)?windowSplashScreenAnimatedIcon"[^>]*>.*?</item>', '', body, flags=re.S)
+                      body += '\n        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash</item>\n'
+                      return match.group(1) + body + match.group(3)
+                  xml = re.sub(pattern, patch, xml, flags=re.S)
+                  styles.write_text(xml)
 
-          print("ZENVIO splash logo applied to legacy and Android 12+ themes.")
+          print("Native ZENVIO splash screen configured for Android 11 and Android 12+.")
           PY
       - run: npx cap sync android
       - run: cd android && chmod +x gradlew && ./gradlew assembleDebug
