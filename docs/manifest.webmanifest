@@ -10,16 +10,10 @@
   "theme_color": "#101a35",
   "icons": [
     {
-      "src": "../zenvio-icon.png",
-      "sizes": "192x192",
-      "type": "image/png",
+      "src": "./zenvio-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
       "purpose": "any"
-    },
-    {
-      "src": "../zenvio-icon.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
     }
   ]
 }
